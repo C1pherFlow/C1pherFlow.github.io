@@ -71,6 +71,8 @@
 
   
   
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.css" integrity="sha384-tLMkTWh2pfXNWGFlUS0w1TFtRG5xZ9lPWFOooj+vDDLIL+xBGQU&#x2F;voDBY5XE2lVh" crossorigin="anonymous">
+  
   
 <meta name="generator" content="Hexo 7.3.0"></head>
 
@@ -223,6 +225,23 @@
   
     
     
+      <meting-js
+        theme="var(--color-link)"
+        id="2265921590"
+        server="netease"
+        type="playlist"
+        
+        fixed="false"
+        autoplay="false"
+        
+        
+        
+        
+        
+        
+        
+      ></meting-js>
+    
   
  
   <div class="sidebar-wrapper">
@@ -236,15 +255,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">1</div>
+    <div class="sidebar-state-number">3</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">3</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -322,8 +341,28 @@
   
     <div class="tag-wrap">
   
+    <div class="archives-tag-list-item" data-aos="zoom-in">
+      <a class="archives-tag-list-link" href="/tags/pwn/">pwn</a>
+    </div>
+  
+    <div class="archives-tag-list-item" data-aos="zoom-in">
+      <a class="archives-tag-list-link" href="/tags/CTF/">CTF</a>
+    </div>
+  
+    <div class="archives-tag-list-item" data-aos="zoom-in">
+      <a class="archives-tag-list-link" href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/">二进制安全</a>
+    </div>
+  
 </div>
 <div class="category-wrap">
+  
+    <div class="archives-category-list-item" data-aos="zoom-in">
+      <a class="archives-category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF/">安全技术</a>
+    </div>
+  
+    <div class="archives-category-list-item" data-aos="zoom-in">
+      <a class="archives-category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF/CTF%E6%AF%94%E8%B5%9B/">CTF比赛</a>
+    </div>
   
 </div>
   
@@ -341,6 +380,34 @@
           </div>
           <ul>
             
+            <li class="archive-article">
+  <div class="archive-article-date">
+    <span>
+      <time class="dt-published" datetime="2025-10-24T13:59:05.000Z" itemprop="datePublished">10-24</time>
+    </span>
+  </div>
+  
+    <a class="archive-article-title" href="/2025/10/24/%E6%88%91%E7%9A%84%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/">我的文章标题</a>
+  
+</li>
+
+            
+      
+      
+            <li class="archive-article">
+  <div class="archive-article-date">
+    <span>
+      <time class="dt-published" datetime="2025-10-24T13:24:32.000Z" itemprop="datePublished">10-24</time>
+    </span>
+  </div>
+  
+    <a class="archive-article-title" href="/2025/10/24/0xgame%E9%9B%86%E9%94%A6%EF%BC%88%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89-pwn/">0xgame比赛复现学习（pwn）（更新中）</a>
+  
+</li>
+
+            
+      
+      
             <li class="archive-article">
   <div class="archive-article-date">
     <span>
@@ -389,10 +456,10 @@
     
       <div>
         <span class="icon-brush"></span>
-        75
+        2.5k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        00:01
+        00:13
       </div>
     
     
@@ -429,15 +496,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">1</div>
+    <div class="sidebar-state-number">3</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">3</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -612,6 +679,29 @@
 
 
 
+  
+<script src="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.js" integrity="sha384-gdGYZwHnfJM54evoZhpO0s6ZF5BQiybkiyW7VXr+h5UfruuRL&#x2F;aORyw+5+HZoU6e" crossorigin="anonymous"></script>
+
+  
+
+
+
+  
+  <script>
+    if (window.matchMedia('(max-width: 959px)').matches) {
+      const meting = _$('meting-js');
+      if (meting) {
+        meting.setAttribute('fixed', 'true');
+        const aside = meting.parentNode?.parentNode;
+        if (aside?.tagName === 'ASIDE') {
+          meting.parentNode.removeChild(meting);
+          document.body.appendChild(meting);
+        }
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/meting@2.0.1/dist/Meting.min.js" integrity="sha384-ASVlpKF80A22OXTK3tfEjZm1EL6uFMKIC4p8+0maanw1S&#x2F;IyB+Y4JG+ZDU7GpKE8" crossorigin="anonymous"></script>
 
 
 
